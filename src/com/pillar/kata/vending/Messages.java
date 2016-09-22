@@ -11,7 +11,8 @@ package com.pillar.kata.vending;
  */
 public class Messages {
 
-    public static String INSERT_COINS = "INSERT COIN";
-    public static String PRICE_PARTIAL = "PRICE";
+    public static String INSERT_COIN = "INSERT COIN";
+    public static String CURRENT_FORMAT = "CURRENT: $%.2f";
+    public static String PRICE_FORMAT = "PRICE: $%.2f";
     public static String THANK_YOU = "THANK YOU";
 }
