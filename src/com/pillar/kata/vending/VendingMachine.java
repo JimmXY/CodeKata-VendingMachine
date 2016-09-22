@@ -87,17 +87,17 @@ public class VendingMachine {
                 returnTray.add(insertedCoin);
                 break;
             case Nickel:
-                setDisplay(Messages.CURRENT_FORMAT, insertedCoin.Value());
                 addCoinToAmount(insertedCoin);
+                setDisplay(Messages.CURRENT_FORMAT, getCurrentAmount());
                 break;
             case Dime:
-                setDisplay(Messages.CURRENT_FORMAT, insertedCoin.Value());
                 addCoinToAmount(insertedCoin);
+                setDisplay(Messages.CURRENT_FORMAT, getCurrentAmount());
                 break;
 
             case Quarter:
-                setDisplay(Messages.CURRENT_FORMAT, insertedCoin.Value());
                 addCoinToAmount(insertedCoin);
+                setDisplay(Messages.CURRENT_FORMAT, getCurrentAmount());
                 break;
 
             case Unknown: // the default specific case

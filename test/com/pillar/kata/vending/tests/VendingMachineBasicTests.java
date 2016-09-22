@@ -13,26 +13,27 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for the VendingMachine.
+ *
  * @author Hariharan
  */
 public class VendingMachineBasicTests {
-    
+
     public VendingMachineBasicTests() {
     }
-    
-    VendingMachine vendingMachine;    
-    
+
+    VendingMachine vendingMachine;
+
     @Before
     public void setUp() {
         vendingMachine = new VendingMachine();
     }
-    
+
     @After
     public void tearDown() {
         vendingMachine = null;// remove the reference for the vending machine to reset.
         // TODO: add any finalizing code required later
     }
-    
+
     @Test
     public void whenDisplayReadAtStartReturnsInsertCoinMessage() {
         assertEquals("INSERT COIN", vendingMachine.readDisplay());
@@ -43,27 +44,35 @@ public class VendingMachineBasicTests {
         vendingMachine.insertCoin("Penny");
         assertEquals("INSERT COIN", vendingMachine.readDisplay());
         assertTrue("Not exactly one coin in return tray", vendingMachine.getReturnTray().size() == 1);
-        assertTrue("Penny not found in return tray", vendingMachine.getReturnTray().contains(Coin.Penny));        
+        assertTrue("Penny not found in return tray", vendingMachine.getReturnTray().contains(Coin.Penny));
     }
-    
+
     @Test
     public void whenANickelIsInsertedAndDisplayReadReturnsNickelValueMessageAndContainsNickelValueInCurrentAmount() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Nickel");
         assertEquals("CURRENT: $0.05", vendingMachine.readDisplay());
-        assertEquals(0.05f, vendingMachine.getCurrentAmount(),0f);        
+        assertEquals(0.05f, vendingMachine.getCurrentAmount(), 0f);
     }
-    
+
     @Test
     public void whenDimeInsertedAndDisplayReadReturnsDimeValueAndContainsDimeValueInCurrentAmount() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Dime");
         assertEquals("CURRENT: $0.10", vendingMachine.readDisplay());
-        assertEquals(0.10f, vendingMachine.getCurrentAmount(),0f);
+        assertEquals(0.10f, vendingMachine.getCurrentAmount(), 0f);
     }
-    
+
     @Test
     public void whenQuarterInsertedAndDisplayReadReturnsQuarterValueAndContainsQuarterValueInCurrentAmount() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Quarter");
         assertEquals("CURRENT: $0.25", vendingMachine.readDisplay());
-        assertEquals(0.25f, vendingMachine.getCurrentAmount(),0f);
+        assertEquals(0.25f, vendingMachine.getCurrentAmount(), 0f);
+    }
+
+    @Test
+    public void whenTwoQuartersInsertedAndDisplayReadReturnsHalfDollarValueAndHasHalfDollarValueInCurrentAmount() throws UnrecognizedCoinInserted {
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        assertEquals("CURRENT: $0.50", vendingMachine.readDisplay());
+        assertEquals(0.50f, vendingMachine.getCurrentAmount(), 0f);
     }
 }
