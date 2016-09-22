@@ -28,7 +28,11 @@ public class VendingMachineTest {
         vendingMachine = null;// remove the reference for the vending machine for garbage collection.
         // TODO: add any finalizing code required later
     }
+    
+    @Test
+    public void whenDisplayReadAtStartReturnsInsertCoinMessage() {
+        assertEquals("Insert Coins", vendingMachine.ReadDisplay());
+    }
 
-   
-  
+    
 }
