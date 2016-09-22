@@ -31,8 +31,9 @@ public class VendingMachineTest {
     
     @Test
     public void whenDisplayReadAtStartReturnsInsertCoinMessage() {
-        assertEquals("Insert Coins", vendingMachine.ReadDisplay());
+        assertEquals("INSERT COIN", vendingMachine.ReadDisplay());
     }
 
+    
     
 }

@@ -6,9 +6,10 @@ package com.pillar.kata.vending;
  * @author Hariharan
  */
 public class VendingMachine {
-
+    
+    
     public String ReadDisplay() {
-        return "Insert Coins";
+        return Messages.INSERT_COINS;
     }
 
 
