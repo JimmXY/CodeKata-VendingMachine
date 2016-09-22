@@ -96,6 +96,8 @@ public class VendingMachine {
                 break;
 
             case Quarter:
+                setDisplay(Messages.CURRENT_FORMAT, insertedCoin.Value());
+                addCoinToAmount(insertedCoin);
                 break;
 
             case Unknown: // the default specific case
