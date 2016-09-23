@@ -1,4 +1,4 @@
-package com.pillar.kata.vending;
+package com.kata.vending_machine;
 
 import java.math.BigDecimal;
 

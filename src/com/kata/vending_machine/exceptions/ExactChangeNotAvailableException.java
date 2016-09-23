@@ -1,4 +1,4 @@
-package com.pillar.kata.vending.exceptions;
+package com.kata.vending_machine.exceptions;
 
 /**
  *
