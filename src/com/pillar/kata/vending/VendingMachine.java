@@ -2,6 +2,7 @@ package com.pillar.kata.vending;
 
 import com.pillar.kata.vending.exceptions.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -14,6 +15,7 @@ public class VendingMachine {
 
     private List<Coin> returnTray;
     private float currentAmountInserted;
+    private HashMap<String, Product> mappedProducts;
 
     /**
      * Reads the Return Tray of coins for the vending machine
@@ -26,8 +28,26 @@ public class VendingMachine {
 
     public VendingMachine() {
         resetVendingMachine();
+        // load the default products with 10 of each
+        loadProducts(createDefaultProducts());
     }
-
+    
+    private List<Product> createDefaultProducts() {
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("Cola", 1f, 10));
+        products.add(new Product("Chips", 0.50f, 10));
+        products.add(new Product("Candy", 0.65f, 10));        
+        return products;
+    }
+    /**
+     * Loads the vending machine with these products
+     * @param products 
+     */
+    public void loadProducts(List<Product> products) {
+        for (int productIndex = 0; productIndex < products.size(); productIndex++) {
+            mappedProducts.put(""+(productIndex+1), products.get(productIndex));
+        }
+    }
     /**
      * Resets the vending machine to a pristine state
      */
@@ -38,6 +58,8 @@ public class VendingMachine {
         currentAmountInserted = 0f;
         // initialize display
         setDisplay(Messages.INSERT_COIN);
+        // initialize the product listing
+        mappedProducts = new HashMap<>();
     }
 
     private String currentDisplay;
@@ -101,11 +123,20 @@ public class VendingMachine {
                 break;
 
             case Unknown: // the default specific case
-
-                break;
+                throw new UnrecognizedCoinInserted(coinName);
 
         }
 
+    }
+    
+    /**
+     * Select a product in the vending machine
+     * @param productNumber The number of the product
+     */
+    public void SelectProduct(String productNumber) {
+        // read the product from the listing 
+        // show the price        
+        setDisplay(Messages.PRICE_FORMAT, mappedProducts.get(productNumber).getUnitPrice());
     }
 
     /**

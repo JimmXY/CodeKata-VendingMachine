@@ -75,4 +75,43 @@ public class VendingMachineBasicTests {
         assertEquals("CURRENT: $0.50", vendingMachine.readDisplay());
         assertEquals(0.50f, vendingMachine.getCurrentAmount(), 0f);
     }
+    
+    @Test
+    public void whenQuarterDimeNickelInsertedAndDisplayReadAfterEachReturnsCorrespondingValueAndUpdatesCurrentAmountAccordingly() throws UnrecognizedCoinInserted {
+        vendingMachine.insertCoin("Quarter");
+        assertEquals("CURRENT: $0.25", vendingMachine.readDisplay());
+        assertEquals(0.25f, vendingMachine.getCurrentAmount(), 0f);
+        
+        vendingMachine.insertCoin("Dime");
+        assertEquals("CURRENT: $0.35", vendingMachine.readDisplay());
+        assertEquals(0.35f, vendingMachine.getCurrentAmount(), 0f);
+        
+        vendingMachine.insertCoin("Nickel");
+        assertEquals("CURRENT: $0.40", vendingMachine.readDisplay());
+        assertEquals(0.40f, vendingMachine.getCurrentAmount(), 0f);       
+        
+    }
+    
+    @Test(expected = UnrecognizedCoinInserted.class)
+    public void whenHalfDollarInsertedExpectUnrecognizedCoinException() throws UnrecognizedCoinInserted {
+        vendingMachine.insertCoin("Half Dollar");
+    }
+    
+    @Test
+    public void whenProduct1IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct1() {
+        vendingMachine.SelectProduct("1");
+        assertEquals("PRICE: $1.00", vendingMachine.readDisplay());            
+    }
+    
+    @Test
+    public void whenProduct2IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct2() {
+        vendingMachine.SelectProduct("2");
+        assertEquals("PRICE: $0.50", vendingMachine.readDisplay());            
+    }
+    
+    @Test
+    public void whenProduct3IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct3() {
+        vendingMachine.SelectProduct("3");
+        assertEquals("PRICE: $0.65", vendingMachine.readDisplay());            
+    }
 }
