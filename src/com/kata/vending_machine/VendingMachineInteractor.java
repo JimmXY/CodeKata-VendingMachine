@@ -69,7 +69,6 @@ public final class VendingMachineInteractor {
 		menu.put("5", "Take dispenser items");
 		menu.put("6", "Take return tray coins");
 		menu.put("9", "Leave the Vending Machine area (Exit)");
-
 		return menu;
 	}
 
