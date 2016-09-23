@@ -22,6 +22,16 @@ public class VendingMachine {
 	private HashMap<String, Product> mappedProducts;
 	private List<String> dispenserTray;
 	private HashMap<Coin, Integer> coinCounts;
+	
+	public String peekDisplayText() {
+		return currentDisplay;
+	}
+	
+ 
+	public HashMap<String, Product> getMappedProducts() {
+		return mappedProducts;
+	}
+
 
 	/**
 	 * Reads the Return Tray of coins for the vending machine
@@ -247,7 +257,14 @@ public class VendingMachine {
 		// reset the current amount and display
 		currentAmountInserted = BigDecimal.ZERO;
 		setDisplay(Messages.INSERT_COIN);
-
+	}
+	
+	public void clearDispenserTray() {
+		dispenserTray.clear();
+	}
+	
+	public void clearReturnTray() {
+		returnTray.clear();
 	}
 
 	/**

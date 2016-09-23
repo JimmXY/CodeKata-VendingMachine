@@ -7,26 +7,19 @@ import java.math.BigDecimal;
  * @author Hariharan
  */
 public class Product {
-    private String name;
-    private BigDecimal unitPrice;
+    private final String name;
+    private final BigDecimal unitPrice;
     private int quantity;
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
+   
     public BigDecimal getUnitPrice() {
         return unitPrice;
     }
-
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = BigDecimal.valueOf(unitPrice);
-    }
-
+ 
     public int getQuantity() {
         return quantity;
     }
