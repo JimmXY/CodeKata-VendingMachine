@@ -213,6 +213,21 @@ public class VendingMachine {
 
     }
 
+    public void returnMoney() {
+        // change the current amount into coins and put into return tray
+        List<Coin> returnCoins = getChangeForAmount(currentAmountInserted);
+        returnTray.addAll(returnCoins);
+        // reset the current amount and display
+        currentAmountInserted = BigDecimal.ZERO;
+        setDisplay(Messages.INSERT_COIN);
+    }
+
+    /**
+     * Get the change in coins for the given amount
+     *
+     * @param changeAmount
+     * @return
+     */
     private List<Coin> getChangeForAmount(BigDecimal changeAmount) {
         List<Coin> change = new ArrayList<>();
         double changeValue = changeAmount.doubleValue();
@@ -226,7 +241,7 @@ public class VendingMachine {
                 coin = Coin.Nickel;
             }
             change.add(coin);
-            changeValue-=coin.Value().doubleValue();
+            changeValue -= coin.Value().doubleValue();
         }
 
         return change;

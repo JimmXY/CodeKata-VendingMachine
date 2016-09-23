@@ -4,6 +4,8 @@ import com.pillar.kata.vending.Coin;
 import com.pillar.kata.vending.VendingMachine;
 import com.pillar.kata.vending.exceptions.UnrecognizedCoinInserted;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -170,7 +172,7 @@ public class VendingMachineBasicTests {
         assertEquals("CURRENT: $0.50", vendingMachine.readDisplay());
         assertEquals(0.50d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
     }
-    
+
     @Test
     public void whenFiveQuartersInsertedAndColaSelectedAndDispensedOneQuarterMustBeInReturnTrayAndColaInDispenserTray() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Quarter");
@@ -179,7 +181,19 @@ public class VendingMachineBasicTests {
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
         vendingMachine.SelectProduct("1");
-        assertTrue("Cola not in dispenser tray",vendingMachine.getDispenserTray().contains("Cola"));
+        assertTrue("Cola not in dispenser tray", vendingMachine.getDispenserTray().contains("Cola"));
         assertTrue("Quarter not in return tray", vendingMachine.getReturnTray().contains(Coin.Quarter));
+    }
+
+    @Test
+    public void whenTwoQuartersInsertedAndReturnMoneyPressedTwoQuartersMustBeInTheReturnTrayAndInsertCoinMustBeDisplayed() throws UnrecognizedCoinInserted {
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.returnMoney();
+        List<Coin> twoQuarters = new ArrayList<>();
+        twoQuarters.add(Coin.Quarter);
+        twoQuarters.add(Coin.Quarter);
+        assertTrue("Two quarters not in return tray", vendingMachine.getReturnTray().containsAll(twoQuarters));
+        assertEquals("INSERT COIN", vendingMachine.readDisplay());
     }
 }
