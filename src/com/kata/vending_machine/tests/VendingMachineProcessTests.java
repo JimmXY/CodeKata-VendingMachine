@@ -1,7 +1,6 @@
 package com.kata.vending_machine.tests;
 
 import static org.junit.Assert.*;
-import com.kata.vending_machine.*;
 import java.util.ArrayList;
 import java.util.List;
 

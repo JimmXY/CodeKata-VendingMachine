@@ -6,7 +6,8 @@ package com.kata.vending_machine.exceptions;
  */
 public class UnrecognizedCoinInserted extends Exception {
 
-    private String coinName;
+	private static final long serialVersionUID = 4887420865799296370L;
+	private String coinName;
     public UnrecognizedCoinInserted(String coinName) {
         this.coinName = coinName;
     }

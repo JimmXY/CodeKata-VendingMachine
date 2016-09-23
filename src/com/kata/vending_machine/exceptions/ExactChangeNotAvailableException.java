@@ -6,7 +6,9 @@ package com.kata.vending_machine.exceptions;
  */
 public class ExactChangeNotAvailableException extends Exception {
 
-    public ExactChangeNotAvailableException(String message) {
+	private static final long serialVersionUID = -5582575050578181099L;
+
+	public ExactChangeNotAvailableException(String message) {
         super(message);
     }
     
