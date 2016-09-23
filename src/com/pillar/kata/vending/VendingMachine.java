@@ -162,7 +162,13 @@ public class VendingMachine {
 
         // read the product from the listing
         Product selectedProduct = mappedProducts.get(productNumber);
-
+        
+        // if item is sold out, show sold out message
+        if (selectedProduct.getQuantity() == 0) {
+            setDisplay(Messages.SOLD_OUT);
+            return;            
+        }
+        
         // check if enough money in machine
         if (currentAmountInserted.doubleValue() >= selectedProduct.getUnitPrice().doubleValue()) {
             // dispense the product
@@ -177,6 +183,9 @@ public class VendingMachine {
             returnTray.addAll(change);
             // set amount in machine to 0
             currentAmountInserted = BigDecimal.ZERO;
+            
+            // remove item from inventory
+            selectedProduct.setQuantity(selectedProduct.getQuantity()-1);
         } else {
             // show the price        
             setDisplay(Messages.PRICE_FORMAT, selectedProduct.getUnitPrice());

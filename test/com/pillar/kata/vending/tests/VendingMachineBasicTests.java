@@ -196,4 +196,42 @@ public class VendingMachineBasicTests {
         assertTrue("Two quarters not in return tray", vendingMachine.getReturnTray().containsAll(twoQuarters));
         assertEquals("INSERT COIN", vendingMachine.readDisplay());
     }
+
+    @Test
+    public void whenTenColasDispensedAndFourQuartersInsertedAndColaSelectedMustDisplaySoldOutAndThenAmountOfOneDollar() throws UnrecognizedCoinInserted {
+
+        for (int i = 0; i < 10; i++) {
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.SelectProduct("1");
+        }
+
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.SelectProduct("1");
+        assertEquals("SOLD OUT", vendingMachine.readDisplay());
+        assertEquals(1.00d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
+        assertEquals("CURRENT: $1.00", vendingMachine.readDisplay());
+    }
+    
+    @Test
+    public void whenTenColasDispensed11thColaSelectedMustDisplaySoldOutAndInsertCoin() throws UnrecognizedCoinInserted {
+
+        for (int i = 0; i < 10; i++) {
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.SelectProduct("1");
+        }
+
+        vendingMachine.SelectProduct("1");
+        assertEquals("SOLD OUT", vendingMachine.readDisplay());
+        assertEquals(0.00d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
+        assertEquals("INSERT COIN", vendingMachine.readDisplay());
+    }
 }
