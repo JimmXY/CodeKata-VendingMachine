@@ -169,6 +169,17 @@ public class VendingMachineBasicTests {
         assertEquals("PRICE: $1.00", vendingMachine.readDisplay());
         assertEquals("CURRENT: $0.50", vendingMachine.readDisplay());
         assertEquals(0.50d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
-
+    }
+    
+    @Test
+    public void whenFiveQuartersInsertedAndColaSelectedAndDispensedOneQuarterMustBeInReturnTrayAndColaInDispenserTray() throws UnrecognizedCoinInserted {
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.SelectProduct("1");
+        assertTrue("Cola not in dispenser tray",vendingMachine.getDispenserTray().contains("Cola"));
+        assertTrue("Quarter not in return tray", vendingMachine.getReturnTray().contains(Coin.Quarter));
     }
 }

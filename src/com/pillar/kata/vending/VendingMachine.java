@@ -164,11 +164,17 @@ public class VendingMachine {
         Product selectedProduct = mappedProducts.get(productNumber);
 
         // check if enough money in machine
-        if (currentAmountInserted.doubleValue() == selectedProduct.getUnitPrice().doubleValue()) {
+        if (currentAmountInserted.doubleValue() >= selectedProduct.getUnitPrice().doubleValue()) {
             // dispense the product
             dispenserTray.add(selectedProduct.getName());
             // display thanks
             setDisplay(Messages.THANK_YOU);
+            // Dispense the change if needed
+            BigDecimal changeAmount = currentAmountInserted.subtract(selectedProduct.getUnitPrice());
+            // Convert the change to coins
+            List<Coin> change = getChangeForAmount(changeAmount);
+            // add coins to return tray
+            returnTray.addAll(change);
             // set amount in machine to 0
             currentAmountInserted = BigDecimal.ZERO;
         } else {
@@ -205,6 +211,25 @@ public class VendingMachine {
         }
         return Coin.Unknown;
 
+    }
+
+    private List<Coin> getChangeForAmount(BigDecimal changeAmount) {
+        List<Coin> change = new ArrayList<>();
+        double changeValue = changeAmount.doubleValue();
+        while (changeValue > 0.00d) {
+            Coin coin = Coin.Unknown;
+            if (changeValue >= 0.25) {
+                coin = Coin.Quarter;
+            } else if (changeValue >= 0.10) {
+                coin = Coin.Dime;
+            } else if (changeValue >= 0.05) {
+                coin = Coin.Nickel;
+            }
+            change.add(coin);
+            changeValue-=coin.Value().doubleValue();
+        }
+
+        return change;
     }
 
 }
