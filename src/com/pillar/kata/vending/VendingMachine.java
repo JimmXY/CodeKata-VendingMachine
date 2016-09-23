@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The {@code VendingMachine} class emulates the actions of the vending machine
@@ -18,6 +20,7 @@ public class VendingMachine {
     private BigDecimal currentAmountInserted;
     private HashMap<String, Product> mappedProducts;
     private List<String> dispenserTray;
+    private HashMap<Coin, Integer> coinCounts;
 
     /**
      * Reads the Return Tray of coins for the vending machine
@@ -28,18 +31,10 @@ public class VendingMachine {
         return returnTray;
     }
 
-    public VendingMachine() {
+    public VendingMachine(List<Product> products, List<Coin> startingCoins) {
         resetVendingMachine();
-        // load the default products with 10 of each
-        loadProducts(createDefaultProducts());
-    }
-
-    private List<Product> createDefaultProducts() {
-        List<Product> products = new ArrayList<>();
-        products.add(new Product("Cola", 1d, 10));
-        products.add(new Product("Chips", 0.50d, 10));
-        products.add(new Product("Candy", 0.65d, 10));
-        return products;
+        loadProducts(products);
+        loadCoins(startingCoins);
     }
 
     /**
@@ -47,7 +42,7 @@ public class VendingMachine {
      *
      * @param products
      */
-    public void loadProducts(List<Product> products) {
+    private void loadProducts(List<Product> products) {
         for (int productIndex = 0; productIndex < products.size(); productIndex++) {
             mappedProducts.put("" + (productIndex + 1), products.get(productIndex));
         }
@@ -72,6 +67,8 @@ public class VendingMachine {
         mappedProducts = new HashMap<>();
         // clear dispenser tray
         dispenserTray = new ArrayList<>();
+        // clear coin counter
+        coinCounts = new HashMap<>();
     }
 
     private String currentDisplay;
@@ -110,6 +107,8 @@ public class VendingMachine {
         // if coins in machine, display amount
         if (currentAmountInserted.doubleValue() > 0) {
             setDisplay(Messages.CURRENT_FORMAT, currentAmountInserted.doubleValue());
+        } else if (coinCounts.get(Coin.Nickel) == 0 || coinCounts.get(Coin.Dime) == 0) {
+            setDisplay(Messages.INSERT_COIN_EXACT);
         } else {
             // else display insert coin message
             setDisplay(Messages.INSERT_COIN);
@@ -135,15 +134,18 @@ public class VendingMachine {
             case Nickel:
                 addCoinToAmount(insertedCoin);
                 setDisplay(Messages.CURRENT_FORMAT, getCurrentAmount());
+                coinCounts.replace(insertedCoin, coinCounts.get(insertedCoin) + 1);
                 break;
             case Dime:
                 addCoinToAmount(insertedCoin);
                 setDisplay(Messages.CURRENT_FORMAT, getCurrentAmount());
+                coinCounts.replace(insertedCoin, coinCounts.get(insertedCoin) + 1);
                 break;
 
             case Quarter:
                 addCoinToAmount(insertedCoin);
                 setDisplay(Messages.CURRENT_FORMAT, getCurrentAmount());
+                coinCounts.replace(insertedCoin, coinCounts.get(insertedCoin) + 1);
                 break;
 
             case Unknown: // the default specific case
@@ -158,17 +160,17 @@ public class VendingMachine {
      *
      * @param productNumber The number of the product
      */
-    public void SelectProduct(String productNumber) {
+    public void SelectProduct(String productNumber) throws ExactChangeNotAvailableException {
 
         // read the product from the listing
         Product selectedProduct = mappedProducts.get(productNumber);
-        
+
         // if item is sold out, show sold out message
         if (selectedProduct.getQuantity() == 0) {
             setDisplay(Messages.SOLD_OUT);
-            return;            
+            return;
         }
-        
+
         // check if enough money in machine
         if (currentAmountInserted.doubleValue() >= selectedProduct.getUnitPrice().doubleValue()) {
             // dispense the product
@@ -181,11 +183,16 @@ public class VendingMachine {
             List<Coin> change = getChangeForAmount(changeAmount);
             // add coins to return tray
             returnTray.addAll(change);
+            // remove coins from coins
+            for (Coin coin : change) {
+                coinCounts.replace(coin, coinCounts.get(coin) - 1);
+            }
+
             // set amount in machine to 0
             currentAmountInserted = BigDecimal.ZERO;
-            
+
             // remove item from inventory
-            selectedProduct.setQuantity(selectedProduct.getQuantity()-1);
+            selectedProduct.setQuantity(selectedProduct.getQuantity() - 1);
         } else {
             // show the price        
             setDisplay(Messages.PRICE_FORMAT, selectedProduct.getUnitPrice());
@@ -223,12 +230,21 @@ public class VendingMachine {
     }
 
     public void returnMoney() {
-        // change the current amount into coins and put into return tray
-        List<Coin> returnCoins = getChangeForAmount(currentAmountInserted);
-        returnTray.addAll(returnCoins);
-        // reset the current amount and display
-        currentAmountInserted = BigDecimal.ZERO;
-        setDisplay(Messages.INSERT_COIN);
+        
+        try {
+            // change the current amount into coins and put into return tray
+            List<Coin> returnCoins = getChangeForAmount(currentAmountInserted);
+            returnTray.addAll(returnCoins);
+            for (Coin returnCoin : returnCoins) {
+                coinCounts.replace(returnCoin, coinCounts.get(returnCoin) - 1);
+            }
+            // reset the current amount and display
+            currentAmountInserted = BigDecimal.ZERO;
+            setDisplay(Messages.INSERT_COIN);
+        } catch (ExactChangeNotAvailableException ex) {
+            // this cannot happen as return money is always on the inserted coins
+            Logger.getLogger(VendingMachine.class.getName()).log(Level.INFO, null, ex);
+        }
     }
 
     /**
@@ -237,23 +253,36 @@ public class VendingMachine {
      * @param changeAmount
      * @return
      */
-    private List<Coin> getChangeForAmount(BigDecimal changeAmount) {
+    private List<Coin> getChangeForAmount(BigDecimal changeAmount) throws ExactChangeNotAvailableException {
         List<Coin> change = new ArrayList<>();
-        double changeValue = changeAmount.doubleValue();
-        while (changeValue > 0.00d) {
+        
+        while (changeAmount.compareTo(BigDecimal.ZERO) > 0) {
             Coin coin = Coin.Unknown;
-            if (changeValue >= 0.25) {
+            if (changeAmount.doubleValue() >= 0.25 && coinCounts.get(Coin.Quarter) > 0) {
                 coin = Coin.Quarter;
-            } else if (changeValue >= 0.10) {
+            } else if (changeAmount.doubleValue() >= 0.10 && coinCounts.get(Coin.Dime) > 0) {
                 coin = Coin.Dime;
-            } else if (changeValue >= 0.05) {
+            } else if (changeAmount.doubleValue() >= 0.05 && coinCounts.get(Coin.Nickel) > 0 ) {
                 coin = Coin.Nickel;
+            } else {
+                throw new ExactChangeNotAvailableException(String.format("Exact change for %.2f not available", changeAmount.doubleValue()));
             }
             change.add(coin);
-            changeValue -= coin.Value().doubleValue();
+            changeAmount = changeAmount.subtract(coin.Value());
         }
 
         return change;
+    }
+
+    private void loadCoins(List<Coin> coins) {
+        for (Coin coin : coins) {
+            if (coinCounts.containsKey(coin)) {
+                coinCounts.replace(coin, coinCounts.get(coin) + 1);
+            } else {
+                coinCounts.put(coin, 1);
+            }
+        }
+
     }
 
 }

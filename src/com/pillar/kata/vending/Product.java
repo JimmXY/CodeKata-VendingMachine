@@ -7,7 +7,6 @@ import java.math.BigDecimal;
  * @author Hariharan
  */
 public class Product {
-
     private String name;
     private BigDecimal unitPrice;
     private int quantity;

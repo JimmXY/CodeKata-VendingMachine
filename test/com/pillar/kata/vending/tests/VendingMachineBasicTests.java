@@ -1,7 +1,9 @@
 package com.pillar.kata.vending.tests;
 
 import com.pillar.kata.vending.Coin;
+import com.pillar.kata.vending.Product;
 import com.pillar.kata.vending.VendingMachine;
+import com.pillar.kata.vending.exceptions.ExactChangeNotAvailableException;
 import com.pillar.kata.vending.exceptions.UnrecognizedCoinInserted;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,9 +28,35 @@ public class VendingMachineBasicTests {
 
     VendingMachine vendingMachine;
 
+    private List<Product> createDefaultProducts() {
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("Cola", 1d, 10));
+        products.add(new Product("Chips", 0.50d, 10));
+        products.add(new Product("Candy", 0.65d, 10));
+        return products;
+    }
+
+    private List<Coin> createStartingCoins() {
+        List<Coin> coins = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            coins.add(Coin.Dime);            
+        }
+        
+        for (int i = 0; i < 10; i++) {
+            coins.add(Coin.Nickel);
+        }
+        
+        for (int i = 0; i < 10; i++) {
+            coins.add(Coin.Quarter);
+        }
+        
+        
+        return coins;
+    }
+
     @Before
     public void setUp() {
-        vendingMachine = new VendingMachine();
+        vendingMachine = new VendingMachine(createDefaultProducts(), createStartingCoins());
     }
 
     @After
@@ -101,25 +129,25 @@ public class VendingMachineBasicTests {
     }
 
     @Test
-    public void whenProduct1IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct1() {
+    public void whenProduct1IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct1() throws ExactChangeNotAvailableException {
         vendingMachine.SelectProduct("1");
         assertEquals("PRICE: $1.00", vendingMachine.readDisplay());
     }
 
     @Test
-    public void whenProduct2IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct2() {
+    public void whenProduct2IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct2() throws ExactChangeNotAvailableException {
         vendingMachine.SelectProduct("2");
         assertEquals("PRICE: $0.50", vendingMachine.readDisplay());
     }
 
     @Test
-    public void whenProduct3IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct3() {
+    public void whenProduct3IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct3() throws ExactChangeNotAvailableException {
         vendingMachine.SelectProduct("3");
         assertEquals("PRICE: $0.65", vendingMachine.readDisplay());
     }
 
     @Test
-    public void whenFourQuartersInsertedAndProduct1SelectedAndDisplayReadReturnsThankYouAndProduct1AddedToDispenerTray() throws UnrecognizedCoinInserted {
+    public void whenFourQuartersInsertedAndProduct1SelectedAndDisplayReadReturnsThankYouAndProduct1AddedToDispenerTray() throws UnrecognizedCoinInserted, ExactChangeNotAvailableException {
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
@@ -130,7 +158,7 @@ public class VendingMachineBasicTests {
     }
 
     @Test
-    public void whenTwoQuartersInsertedAndProduct2SelectedAndDisplayReadReturnsThankYouAndProduct2AddedToDispenerTray() throws UnrecognizedCoinInserted {
+    public void whenTwoQuartersInsertedAndProduct2SelectedAndDisplayReadReturnsThankYouAndProduct2AddedToDispenerTray() throws UnrecognizedCoinInserted, ExactChangeNotAvailableException {
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
         vendingMachine.SelectProduct("2");
@@ -139,7 +167,7 @@ public class VendingMachineBasicTests {
     }
 
     @Test
-    public void whenTwoQuartersAndOneDimeAndOneNickelInsertedAndProduct3SelectedAndDisplayReadReturnsThankYouAndProduct3AddedToDispenerTray() throws UnrecognizedCoinInserted {
+    public void whenTwoQuartersAndOneDimeAndOneNickelInsertedAndProduct3SelectedAndDisplayReadReturnsThankYouAndProduct3AddedToDispenerTray() throws UnrecognizedCoinInserted, ExactChangeNotAvailableException {
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Dime");
@@ -150,7 +178,7 @@ public class VendingMachineBasicTests {
     }
 
     @Test
-    public void whenProduct1SuccesfullyDispensedAndDisplayReadAgainReturnsInsertCoinsWithZeroBalance() throws UnrecognizedCoinInserted {
+    public void whenProduct1SuccesfullyDispensedAndDisplayReadAgainReturnsInsertCoinsWithZeroBalance() throws UnrecognizedCoinInserted, ExactChangeNotAvailableException {
         //whenFourQuartersInsertedAndProduct1SelectedAndDisplayReadReturnsThankYouAndProduct1AddedToDispenerTray();
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
@@ -164,7 +192,7 @@ public class VendingMachineBasicTests {
     }
 
     @Test
-    public void whenTwoQuartersInsertedAndProductColaSelectedAndDisplayReadTwiceReturnsFiftyCentsAmountDisplay() throws UnrecognizedCoinInserted {
+    public void whenTwoQuartersInsertedAndProductColaSelectedAndDisplayReadTwiceReturnsFiftyCentsAmountDisplay() throws UnrecognizedCoinInserted, ExactChangeNotAvailableException {
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
         vendingMachine.SelectProduct("1");
@@ -174,7 +202,7 @@ public class VendingMachineBasicTests {
     }
 
     @Test
-    public void whenFiveQuartersInsertedAndColaSelectedAndDispensedOneQuarterMustBeInReturnTrayAndColaInDispenserTray() throws UnrecognizedCoinInserted {
+    public void whenFiveQuartersInsertedAndColaSelectedAndDispensedOneQuarterMustBeInReturnTrayAndColaInDispenserTray() throws UnrecognizedCoinInserted, ExactChangeNotAvailableException {
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
@@ -198,7 +226,7 @@ public class VendingMachineBasicTests {
     }
 
     @Test
-    public void whenTenColasDispensedAndFourQuartersInsertedAndColaSelectedMustDisplaySoldOutAndThenAmountOfOneDollar() throws UnrecognizedCoinInserted {
+    public void whenTenColasDispensedAndFourQuartersInsertedAndColaSelectedMustDisplaySoldOutAndThenAmountOfOneDollar() throws UnrecognizedCoinInserted, ExactChangeNotAvailableException {
 
         for (int i = 0; i < 10; i++) {
             vendingMachine.insertCoin("Quarter");
@@ -217,9 +245,9 @@ public class VendingMachineBasicTests {
         assertEquals(1.00d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
         assertEquals("CURRENT: $1.00", vendingMachine.readDisplay());
     }
-    
+
     @Test
-    public void whenTenColasDispensed11thColaSelectedMustDisplaySoldOutAndInsertCoin() throws UnrecognizedCoinInserted {
+    public void whenTenColasDispensed11thColaSelectedMustDisplaySoldOutAndInsertCoin() throws UnrecognizedCoinInserted, ExactChangeNotAvailableException {
 
         for (int i = 0; i < 10; i++) {
             vendingMachine.insertCoin("Quarter");
@@ -234,4 +262,18 @@ public class VendingMachineBasicTests {
         assertEquals(0.00d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
         assertEquals("INSERT COIN", vendingMachine.readDisplay());
     }
+    
+    @Test
+    public void whenTenCandiesAreDispensedDisplayReturnsExactChangeMessage() throws UnrecognizedCoinInserted, ExactChangeNotAvailableException {
+        for (int i = 0; i < 10; i++) {
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.insertCoin("Quarter");
+            vendingMachine.SelectProduct("3");
+            vendingMachine.readDisplay();
+        }
+        assertEquals("EXACT CHANGE ONLY", vendingMachine.readDisplay());
+    }
+
 }
