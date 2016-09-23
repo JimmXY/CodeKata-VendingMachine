@@ -59,14 +59,14 @@ public class VendingMachineBasicTests {
     public void whenDimeInsertedAndDisplayReadReturnsDimeValueAndContainsDimeValueInCurrentAmount() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Dime");
         assertEquals("CURRENT: $0.10", vendingMachine.readDisplay());
-        assertEquals(0.10d, vendingMachine.getCurrentAmount().doubleValue(),0d);
+        assertEquals(0.10d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
     }
 
     @Test
     public void whenQuarterInsertedAndDisplayReadReturnsQuarterValueAndContainsQuarterValueInCurrentAmount() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Quarter");
         assertEquals("CURRENT: $0.25", vendingMachine.readDisplay());
-        assertEquals(0.25d, vendingMachine.getCurrentAmount().doubleValue(),0d);       
+        assertEquals(0.25d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
     }
 
     @Test
@@ -74,48 +74,48 @@ public class VendingMachineBasicTests {
         vendingMachine.insertCoin("Quarter");
         vendingMachine.insertCoin("Quarter");
         assertEquals("CURRENT: $0.50", vendingMachine.readDisplay());
-        assertEquals(0.50d, vendingMachine.getCurrentAmount().doubleValue(),0d);
+        assertEquals(0.50d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
     }
-    
+
     @Test
     public void whenQuarterDimeNickelInsertedAndDisplayReadAfterEachReturnsCorrespondingValueAndUpdatesCurrentAmountAccordingly() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Quarter");
         assertEquals("CURRENT: $0.25", vendingMachine.readDisplay());
-        assertEquals(0.25d, vendingMachine.getCurrentAmount().doubleValue(),0d);
-        
+        assertEquals(0.25d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
+
         vendingMachine.insertCoin("Dime");
         assertEquals("CURRENT: $0.35", vendingMachine.readDisplay());
         assertEquals(0.35d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
-        
+
         vendingMachine.insertCoin("Nickel");
         assertEquals("CURRENT: $0.40", vendingMachine.readDisplay());
-        assertEquals(0.4d, vendingMachine.getCurrentAmount().doubleValue(),0.0d);       
-        
+        assertEquals(0.4d, vendingMachine.getCurrentAmount().doubleValue(), 0.0d);
+
     }
-    
+
     @Test(expected = UnrecognizedCoinInserted.class)
     public void whenHalfDollarInsertedExpectUnrecognizedCoinException() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Half Dollar");
     }
-    
+
     @Test
     public void whenProduct1IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct1() {
         vendingMachine.SelectProduct("1");
-        assertEquals("PRICE: $1.00", vendingMachine.readDisplay());            
+        assertEquals("PRICE: $1.00", vendingMachine.readDisplay());
     }
-    
+
     @Test
     public void whenProduct2IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct2() {
         vendingMachine.SelectProduct("2");
-        assertEquals("PRICE: $0.50", vendingMachine.readDisplay());            
+        assertEquals("PRICE: $0.50", vendingMachine.readDisplay());
     }
-    
+
     @Test
     public void whenProduct3IsSelectedWithoutAnyMoneyAndDisplayReadReturnsPriceOfProduct3() {
         vendingMachine.SelectProduct("3");
-        assertEquals("PRICE: $0.65", vendingMachine.readDisplay());            
+        assertEquals("PRICE: $0.65", vendingMachine.readDisplay());
     }
-    
+
     @Test
     public void whenFourQuartersInsertedAndProduct1SelectedAndDisplayReadReturnsThankYouAndProduct1AddedToDispenerTray() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Quarter");
@@ -126,7 +126,7 @@ public class VendingMachineBasicTests {
         assertEquals("THANK YOU", vendingMachine.readDisplay());
         assertTrue(vendingMachine.getDispenserTray().contains("Cola"));
     }
-    
+
     @Test
     public void whenTwoQuartersInsertedAndProduct2SelectedAndDisplayReadReturnsThankYouAndProduct2AddedToDispenerTray() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Quarter");
@@ -135,7 +135,7 @@ public class VendingMachineBasicTests {
         assertEquals("THANK YOU", vendingMachine.readDisplay());
         assertTrue(vendingMachine.getDispenserTray().contains("Chips"));
     }
-    
+
     @Test
     public void whenTwoQuartersAndOneDimeAndOneNickelInsertedAndProduct3SelectedAndDisplayReadReturnsThankYouAndProduct3AddedToDispenerTray() throws UnrecognizedCoinInserted {
         vendingMachine.insertCoin("Quarter");
@@ -146,5 +146,29 @@ public class VendingMachineBasicTests {
         assertEquals("THANK YOU", vendingMachine.readDisplay());
         assertTrue(vendingMachine.getDispenserTray().contains("Candy"));
     }
-    
+
+    @Test
+    public void whenProduct1SuccesfullyDispensedAndDisplayReadAgainReturnsInsertCoinsWithZeroBalance() throws UnrecognizedCoinInserted {
+        //whenFourQuartersInsertedAndProduct1SelectedAndDisplayReadReturnsThankYouAndProduct1AddedToDispenerTray();
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.SelectProduct("1");
+        assertEquals("THANK YOU", vendingMachine.readDisplay());
+        assertTrue(vendingMachine.getDispenserTray().contains("Cola"));
+        assertEquals("INSERT COIN", vendingMachine.readDisplay());
+        assertEquals(0.0d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
+    }
+
+    @Test
+    public void whenTwoQuartersInsertedAndProductColaSelectedAndDisplayReadTwiceReturnsFiftyCentsAmountDisplay() throws UnrecognizedCoinInserted {
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.insertCoin("Quarter");
+        vendingMachine.SelectProduct("1");
+        assertEquals("PRICE: $1.00", vendingMachine.readDisplay());
+        assertEquals("CURRENT: $0.50", vendingMachine.readDisplay());
+        assertEquals(0.50d, vendingMachine.getCurrentAmount().doubleValue(), 0d);
+
+    }
 }

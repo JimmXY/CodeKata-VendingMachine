@@ -101,7 +101,19 @@ public class VendingMachine {
      * @return The current message displayed by the vending machine
      */
     public String readDisplay() {
-        return currentDisplay;
+        String currentMessage = currentDisplay;
+        resetDisplay(); // resets display after each read
+        return currentMessage;
+    }
+
+    private void resetDisplay() {
+        // if coins in machine, display amount
+        if (currentAmountInserted.doubleValue() > 0) {
+            setDisplay(Messages.CURRENT_FORMAT, currentAmountInserted.doubleValue());
+        } else {
+            // else display insert coin message
+            setDisplay(Messages.INSERT_COIN);
+        }
     }
 
     /**
@@ -150,13 +162,15 @@ public class VendingMachine {
 
         // read the product from the listing
         Product selectedProduct = mappedProducts.get(productNumber);
-        
+
         // check if enough money in machine
         if (currentAmountInserted.doubleValue() == selectedProduct.getUnitPrice().doubleValue()) {
             // dispense the product
             dispenserTray.add(selectedProduct.getName());
             // display thanks
             setDisplay(Messages.THANK_YOU);
+            // set amount in machine to 0
+            currentAmountInserted = BigDecimal.ZERO;
         } else {
             // show the price        
             setDisplay(Messages.PRICE_FORMAT, selectedProduct.getUnitPrice());
