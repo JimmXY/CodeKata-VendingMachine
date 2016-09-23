@@ -1,4 +1,4 @@
 # CodeKata-VendingMachine
-The code kata solution for the Vending Machine problem from Pillar Technology.
+The code kata solution for the Vending Machine problem.
 
 Author: Hariharan Arunachalam
