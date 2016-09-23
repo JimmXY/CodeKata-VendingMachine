@@ -1,14 +1,16 @@
 package com.pillar.kata.vending;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author Hariharan
  */
 public class Product {
 
-       private String name;
-       private float unitPrice;
-       private int quantity;
+    private String name;
+    private BigDecimal unitPrice;
+    private int quantity;
 
     public String getName() {
         return name;
@@ -18,12 +20,12 @@ public class Product {
         this.name = name;
     }
 
-    public float getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(float unitPrice) {
-        this.unitPrice = unitPrice;
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = BigDecimal.valueOf(unitPrice);
     }
 
     public int getQuantity() {
@@ -34,9 +36,10 @@ public class Product {
         this.quantity = quantity;
     }
 
-    public Product(String name, float unitPrice, int quantity) {
+    public Product(String name, double unitPrice, int quantity) {
         this.name = name;
-        this.unitPrice = unitPrice;
+        this.unitPrice = BigDecimal.valueOf(unitPrice);
+        this.unitPrice.setScale(2);
         this.quantity = quantity;
-    }    
+    }
 }

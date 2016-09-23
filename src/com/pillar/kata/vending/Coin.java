@@ -5,22 +5,28 @@
  */
 package com.pillar.kata.vending;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author Hariharan
  */
 public enum Coin {
-    
-    Penny(0.01),
-    Nickel(0.05),
-    Dime(0.10),
-    Quarter(0.25), 
-    Unknown(0.00);
-    
-    private final double value;  
-    
+
+    Penny(0.01d),
+    Nickel(0.05d),
+    Dime(0.10d),
+    Quarter(0.25d),
+    Unknown(0.00d);
+
+    private final BigDecimal value;
+
     Coin(double value) {
-        this.value = value;
+        this.value = BigDecimal.valueOf(value);
+        this.value.setScale(2);
     }
-    public double Value() { return value; }
+
+    public BigDecimal Value() {
+        return value;
+    }
 }

@@ -1,6 +1,7 @@
 package com.pillar.kata.vending;
 
 import com.pillar.kata.vending.exceptions.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +15,9 @@ import java.util.List;
 public class VendingMachine {
 
     private List<Coin> returnTray;
-    private float currentAmountInserted;
+    private BigDecimal currentAmountInserted;
     private HashMap<String, Product> mappedProducts;
+    private List<String> dispenserTray;
 
     /**
      * Reads the Return Tray of coins for the vending machine
@@ -31,23 +33,30 @@ public class VendingMachine {
         // load the default products with 10 of each
         loadProducts(createDefaultProducts());
     }
-    
+
     private List<Product> createDefaultProducts() {
         List<Product> products = new ArrayList<>();
-        products.add(new Product("Cola", 1f, 10));
-        products.add(new Product("Chips", 0.50f, 10));
-        products.add(new Product("Candy", 0.65f, 10));        
+        products.add(new Product("Cola", 1d, 10));
+        products.add(new Product("Chips", 0.50d, 10));
+        products.add(new Product("Candy", 0.65d, 10));
         return products;
     }
+
     /**
      * Loads the vending machine with these products
-     * @param products 
+     *
+     * @param products
      */
     public void loadProducts(List<Product> products) {
         for (int productIndex = 0; productIndex < products.size(); productIndex++) {
-            mappedProducts.put(""+(productIndex+1), products.get(productIndex));
+            mappedProducts.put("" + (productIndex + 1), products.get(productIndex));
         }
     }
+
+    public List<String> getDispenserTray() {
+        return dispenserTray;
+    }
+
     /**
      * Resets the vending machine to a pristine state
      */
@@ -55,11 +64,14 @@ public class VendingMachine {
         // Empty return tray initialized
         returnTray = new ArrayList<>();
         // initialize current amount
-        currentAmountInserted = 0f;
+        currentAmountInserted = BigDecimal.ZERO;
+        currentAmountInserted.setScale(2);
         // initialize display
         setDisplay(Messages.INSERT_COIN);
         // initialize the product listing
         mappedProducts = new HashMap<>();
+        // clear dispenser tray
+        dispenserTray = new ArrayList<>();
     }
 
     private String currentDisplay;
@@ -80,7 +92,7 @@ public class VendingMachine {
      * @param coin The coin to be added to the current amount
      */
     private void addCoinToAmount(Coin coin) {
-        currentAmountInserted += coin.Value();
+        currentAmountInserted = currentAmountInserted.add(coin.Value());
     }
 
     /**
@@ -128,15 +140,27 @@ public class VendingMachine {
         }
 
     }
-    
+
     /**
      * Select a product in the vending machine
+     *
      * @param productNumber The number of the product
      */
     public void SelectProduct(String productNumber) {
-        // read the product from the listing 
-        // show the price        
-        setDisplay(Messages.PRICE_FORMAT, mappedProducts.get(productNumber).getUnitPrice());
+
+        // read the product from the listing
+        Product selectedProduct = mappedProducts.get(productNumber);
+        
+        // check if enough money in machine
+        if (currentAmountInserted.doubleValue() == selectedProduct.getUnitPrice().doubleValue()) {
+            // dispense the product
+            dispenserTray.add(selectedProduct.getName());
+            // display thanks
+            setDisplay(Messages.THANK_YOU);
+        } else {
+            // show the price        
+            setDisplay(Messages.PRICE_FORMAT, selectedProduct.getUnitPrice());
+        }
     }
 
     /**
@@ -144,7 +168,7 @@ public class VendingMachine {
      *
      * @return The current amount inserted in the vending machine
      */
-    public float getCurrentAmount() {
+    public BigDecimal getCurrentAmount() {
         return currentAmountInserted;
     }
 
